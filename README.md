@@ -1,4 +1,4 @@
-TestingPowershellCmdletWithCSharp
+Testing Powershell Cmdlet With CSharp
 =================================
 
 Simple code examples that illustrate how to test Powershell cmdlets in C#
