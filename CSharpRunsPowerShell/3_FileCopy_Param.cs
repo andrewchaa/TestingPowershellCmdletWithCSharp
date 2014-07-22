@@ -28,13 +28,16 @@ namespace CSharpRunsPowerShell
                     fileStream.Write(bytes, 0, bytes.Length);
                 }
 
-                string script = 
-                    "param($testFilePath) " + 
-                    "Test-Path $testFilePath";
+                string script =
+                    "param([string]$testFilePath, [string]$testTemp); " + 
+                    "Test-Path $testFilePath;" +
+                    "$testTemp;" + 
+                    "Test-Path $testFilePathNew";
                 
                 _shellInstance = PowerShell.Create();
                 _shellInstance.AddScript(script);
                 _shellInstance.AddParameter("testFilePath", testFilePath);
+//                _shellInstance.AddParameter("testTemp", "Hello");
             };
 
             Because of = () =>
@@ -43,17 +46,20 @@ namespace CSharpRunsPowerShell
                 foreach (var psObject in _output)
                 {
                     if (psObject != null)
-                        Console.WriteLine(psObject);
+                        Console.WriteLine("output: " + psObject);
                 }
 
                 foreach (var errorRecord in _shellInstance.Streams.Error)
                 {
                     if (errorRecord != null)
-                        Console.WriteLine(errorRecord);
+                        Console.WriteLine("error: " + errorRecord);
                 }
             };
 
             It should_have_the_file_in_the_temp_folder = () => ((bool)_output[0].BaseObject).ShouldBeTrue();
+
+            It should_have_run_the_script_without_any_error = () =>
+                _shellInstance.Streams.Error.ShouldBeEmpty();
         }
 
     }
